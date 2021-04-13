@@ -47,21 +47,6 @@ int callback(void)
     return 0;
 }
 
-int return0(void)
-{
-    return 0;
-}
-void* p_return0;
-
-//on 7.XX exploited webkit crashes sometimes (gc?)
-//idk if it happens on production
-void shut_up(int sig, siginfo_t* idc, void* o_uc)
-{
-    ucontext_t* uc = (ucontext_t*)o_uc;
-    mcontext_t* mc = (mcontext_t*)(((char*)&uc->uc_mcontext)+48);
-    mc->mc_rax = (uintptr_t)&p_return0;
-}
-
 int main()
 {
     //dbg_enter();
@@ -82,11 +67,5 @@ int main()
     sceRegMgrSetBin = dlsym(dll, "sceRegMgrSetBin");
     callback_header = mmap((void*)0x9111110000, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
     callback_header->ptr = gadget;
-    p_return0 = return0;
-    struct sigaction sigsegv = {
-        .sa_sigaction = shut_up,
-        .sa_flags = SA_SIGINFO,
-    };
-    sigaction(SIGSEGV, &sigsegv, 0);
     return 0;
 }

@@ -113,12 +113,10 @@ function fetchAccounts()
         fetchAccount(i);
 }
 
-function activateAccount(i, ev)
+function activateAccount(idx)
 {
-    if(ev.button != 0 || ui[i].button.disabled)
-        return false;
-    mailbox.idx = i;
-    var acc_id = ui[i].id.value;
+    mailbox.idx = idx;
+    var acc_id = ui[idx].id.value;
     if(acc_id.length != 16)
         acc_id = 'XXXXXXXXXXXXXXXX';
     var binary_id = [];
@@ -136,6 +134,8 @@ function activateAccount(i, ev)
     mailbox.account_id = binary_id;
     call_native();
     fetchAccounts();
+    if(ui[idx].id.value == acc_id.toUpperCase())
+        alert("PSN ID set successfully!");
     return false;
 }
 
@@ -144,5 +144,5 @@ fetchAccounts();
 for(var i = 0; i < 16; i++)
 {
     ui[i].username.onclick = setRandomID.bind(window, i);
-    ui[i].button.onmousedown = activateAccount.bind(window, i);
+    ui[i].button.onclick = activateAccount.bind(window, i);
 }
