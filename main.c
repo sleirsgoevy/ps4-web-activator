@@ -47,9 +47,19 @@ int callback(void)
     return 0;
 }
 
+void sigsegv(int sig)
+{
+    thr_exit(0);
+}
+
 int main()
 {
     //dbg_enter();
+    struct sigaction sa = {
+        .sa_handler = sigsegv,
+        .sa_flags = 0,
+    };
+    sigaction(SIGSEGV, &sa, 0);
     struct jbc_cred cr;
     jbc_get_cred(&cr);
     jbc_jailbreak_cred(&cr);
